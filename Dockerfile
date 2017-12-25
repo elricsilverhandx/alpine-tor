@@ -1,10 +1,18 @@
-FROM alpine
+FROM alpine:edge
 
-RUN apk add tor --update-cache --repository http://dl-4.alpinelinux.org/alpine/edge/community/ --allow-untrusted haproxy ruby privoxy
+RUN apk add --no-cache haproxy ruby privoxy libevent libressl2.6-libcrypto libressl2.6-libssl zlib zstd xz-libs
 
-RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev  \
-  && apk add ruby-nokogiri --update-cache --repository http://dl-4.alpinelinux.org/alpine/v3.3/main/ \
+RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev git build-base automake autoconf libevent-dev libressl-dev zlib-dev ruby-nokogiri zstd-dev \
   && gem install --no-ri --no-rdoc socksify \
+  && cd /tmp \
+  && git clone https://github.com/torproject/tor.git \
+  && cd tor \
+  && ./autogen.sh \
+  && ./configure --disable-asciidoc \
+  && make -j4 \
+  && make install \
+  && cd .. \
+  && rm -rf tor \
   && apk del build-dependencies \
   && rm -rf /var/cache/apk/*
 
