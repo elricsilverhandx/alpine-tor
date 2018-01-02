@@ -107,10 +107,8 @@ module Service
                                  "--CircuitBuildTimeout #{circuit_build_timeout}",
                                  "--DataDirectory #{data_directory}",
                                  "--PidFile #{pid_file}",
-                                 "--Log \"warn syslog\"",
                                  '--RunAsDaemon 1',
-                                 '--tor2web 1',
-                                 "| logger -t 'tor' 2>&1")
+                                 '--tor2web 1')
     end
   end
 
@@ -227,13 +225,6 @@ end
 sleep 60
 
 loop do
-  $logger.info "testing proxies"
-  proxies.each do |proxy|
-    $logger.info "testing proxy #{proxy.id} (port #{proxy.port})"
-    $logger.info "sleeping for #{tor_instances} seconds"
-    sleep Integer(tor_instances)
-  end
-
   $logger.info "sleeping for 60 seconds"
   sleep 60
 end
