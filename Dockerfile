@@ -8,7 +8,7 @@ RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev git buil
   && git clone https://github.com/torproject/tor.git \
   && cd tor \
   && ./autogen.sh \
-  && ./configure --disable-asciidoc \
+  && ./configure --disable-asciidoc --enable-tor2web-mode \
   && make -j4 \
   && make install \
   && cd .. \

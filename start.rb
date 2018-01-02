@@ -109,6 +109,7 @@ module Service
                                  "--PidFile #{pid_file}",
                                  "--Log \"warn syslog\"",
                                  '--RunAsDaemon 1',
+                                 '--tor2web 1',
                                  "| logger -t 'tor' 2>&1")
     end
   end
@@ -132,34 +133,11 @@ module Service
       @tor.stop
     end
 
-    def restart
-      stop
-      sleep 5
-      start
-    end
-
     def tor_port
       10000 + id
     end
 
     alias_method :port, :tor_port
-
-    def test_url
-      ENV['test_url'] || 'http://google.com'
-    end
-
-    def test_status
-      ENV['test_status'] || '302'
-    end
-
-    def working?
-      uri = URI.parse(test_url)
-      Net::HTTP.SOCKSProxy('127.0.0.1', port).start(uri.host, uri.port) do |http|
-        http.get(uri.path).code==test_status
-      end
-    rescue
-      false
-    end
   end
 
   class Haproxy < Base
@@ -252,7 +230,6 @@ loop do
   $logger.info "testing proxies"
   proxies.each do |proxy|
     $logger.info "testing proxy #{proxy.id} (port #{proxy.port})"
-    proxy.restart unless proxy.working?
     $logger.info "sleeping for #{tor_instances} seconds"
     sleep Integer(tor_instances)
   end
