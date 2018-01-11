@@ -1,6 +1,6 @@
 FROM alpine:edge
 
-RUN apk add --no-cache haproxy ruby privoxy libevent libressl2.6-libcrypto libressl2.6-libssl zlib zstd xz-libs
+RUN apk add --no-cache haproxy ruby libevent libressl2.6-libcrypto libressl2.6-libssl zlib zstd xz-libs
 
 RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev git build-base automake autoconf libevent-dev libressl-dev zlib-dev ruby-nokogiri zstd-dev \
   && gem install --no-ri --no-rdoc socksify \
@@ -18,7 +18,6 @@ RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev git buil
 
 
 ADD haproxy.cfg.erb /usr/local/etc/haproxy.cfg.erb
-ADD privoxy.cfg.erb /usr/local/etc/privoxy.cfg.erb
 
 ADD start.rb /usr/local/bin/start.rb
 RUN chmod +x /usr/local/bin/start.rb

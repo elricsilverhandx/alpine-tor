@@ -1,12 +1,17 @@
 alpine-tor
 ==================
 
+# PLEASE NOTE THAT THIS IS INSECURE FOR GENERAL USAGE
+# FORK THIS AND REMOVE TOR2WEB MODE IF YOU NEED SECURITY
+# OR USE THIS FOR YOUR OWN TOR2WEB NODE IF YOU UNDERSTAND HOW BAD THIS IS
+
+
 ```
                Docker Container
                -------------------------------------
-               (Optional)           <-> Tor Proxy 1
-Client <---->   Privoxy <-> HAproxy <-> Tor Proxy 2
-                                    <-> Tor Proxy n
+                        <-> Tor Proxy 1
+Client <---->   HAproxy <-> Tor Proxy 2
+                        <-> Tor Proxy n
 ```
 
 Parents
@@ -19,10 +24,6 @@ Parents
 __Why:__ Lots of IP addresses. One single endpoint for your client.
 Load-balancing by HAproxy.
 
-Optionaly adds support for [Privoxy](https://www.privoxy.org/) using
-`-e privoxy=1`, useful for http (default `8118`, changable via
-`-e privoxy_port=<port>`) proxy forward and ad removal.
-
 Environment Variables
 -----
  * `tors` - Integer, number of tor instances to run. (Default: 20)
@@ -32,9 +33,8 @@ Environment Variables
    seconds. (Default: 10 minutes)
  * `circuit_build_timeout` - Integer, CircuitBuildTimeout parameter value in
    seconds. (Default: 60 seconds)
- * `privoxy` - Boolean, whatever to run insance of privoxy in front of haproxy.
- * `privoxy_port` - Integer, port for privoxy. (Default: 8118)
- * `haproxy_port` - Integer, port for haproxy. (Default: 5566)
+ * `haproxy_port_http` - Integer, port for http tunneling. (Default: 8118)
+ * `haproxy_port_socks` - Integer, port for haproxy. (Default: 5566)
  * `haproxy_stats` - Integer, port for haproxy monitor. (Default: 2090)
  * `haproxy_login` and `haproxy_pass` - BasicAuth config for haproxy monitor.
    (Default: `admin` in both variables)
@@ -56,13 +56,10 @@ docker pull zeta0/alpine-tor:latest
 # start docker container
 docker run -d -p 5566:5566 -p 2090:2090 -e tors=25 zeta0/alpine-tor
 
-# start docker with privoxy enabled and exposed
-docker run -d -p 8118:8118 -p 2090:2090 -e tors=25 -e privoxy=1 zeta0/alpine-tor
-
 # test with ...
 curl --socks5 localhost:5566 http://httpbin.org/ip
 
-# or if privoxy enabled ...
+# or with http
 curl --proxy localhost:8118 http://httpbin.org/ip
 
 # or to run chromium with your new found proxy
@@ -85,4 +82,3 @@ Further Readings
  * [Tor Manual](https://www.torproject.org/docs/tor-manual.html.en)
  * [Tor Control](https://www.thesprawl.org/research/tor-control-protocol/)
  * [HAProxy Manual](http://cbonte.github.io/haproxy-dconv/index.html)
- * [Privoxy Manual](https://www.privoxy.org/user-manual/)

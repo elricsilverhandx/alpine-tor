@@ -21,14 +21,30 @@ listen stats
   stats auth <%= login %>:<%= pass %>
 
 
-listen TOR-in
-  bind *:<%= port %>
+listen TOR-in-socks
+  bind *:<%= port_socks %>
   mode tcp
-  default_backend TOR
+  default_backend TORSocks
   balance roundrobin
 
-backend TOR
+listen TOR-in-http
+  bind *:<%= port_http %>
+  mode tcp
+  default_backend TORHTTP
+  balance roundrobin
+
+backend TORSocks
   mode tcp
   <% backends.each do |b| %>
+  <% if b[:name] == 'tor_socks' %>
   server <%= b[:addr] %>:<%= b[:port] %> <%= b[:addr] %>:<%= b[:port] %> check
+  <% end %>
+  <% end %>
+
+backend TORHTTP
+  mode tcp
+  <% backends.each do |b| %>
+  <% if b[:name] == 'tor_http' %>
+  server <%= b[:addr] %>:<%= b[:port] %> <%= b[:addr] %>:<%= b[:port] %> check
+  <% end %>
   <% end %>
