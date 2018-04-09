@@ -38,10 +38,6 @@ Environment Variables
  * `haproxy_stats` - Integer, port for haproxy monitor. (Default: 2090)
  * `haproxy_login` and `haproxy_pass` - BasicAuth config for haproxy monitor.
    (Default: `admin` in both variables)
- * `test_url` - URL for health check throught Tor proxy.
-   (Default: http://google.com)
- * `test_status` - Integer, HTTP status code for `test_url` in working case.
-   (Default: 302)
 
 Usage
 -----
