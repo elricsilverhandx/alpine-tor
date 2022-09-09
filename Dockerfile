@@ -1,21 +1,7 @@
 FROM alpine:edge
 
-RUN apk add --no-cache haproxy ruby libevent libressl2.6-libcrypto libressl2.6-libssl zlib zstd xz-libs zstd-dev zlib-dev
-
-RUN apk --update add --virtual build-dependencies ruby-bundler ruby-dev git build-base automake autoconf libevent-dev libressl-dev ruby-nokogiri  \
-  && gem install --no-ri --no-rdoc socksify \
-  && cd /tmp \
-  && git clone https://github.com/torproject/tor.git \
-  && cd tor \
-  && ./autogen.sh \
-  && ./configure --disable-asciidoc --enable-tor2web-mode \
-  && make -j4 \
-  && make install \
-  && cd .. \
-  && rm -rf tor \
-  && apk del build-dependencies \
-  && rm -rf /var/cache/apk/*
-
+RUN apk add --no-cache tor haproxy ruby libevent libressl-dev zlib zstd xz-libs zstd-dev zlib-dev && \
+  gem install --no-document socksify
 
 ADD haproxy.cfg.erb /usr/local/etc/haproxy.cfg.erb
 
